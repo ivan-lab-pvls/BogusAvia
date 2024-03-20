@@ -1,3 +1,7 @@
+import 'package:adjust_sdk/adjust.dart';
+import 'package:adjust_sdk/adjust_config.dart';
+import 'package:adjust_sdk/adjust_event.dart';
+import 'package:app_tracking_transparency/app_tracking_transparency.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
@@ -5,10 +9,34 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 const String _kcoinsKey = 'coins';
 
-class NewPlaneSkins extends StatelessWidget {
+class NewPlaneSkins extends StatefulWidget {
   final String details;
 
   NewPlaneSkins({required this.details});
+
+  @override
+  State<NewPlaneSkins> createState() => _NewPlaneSkinsState();
+}
+
+class _NewPlaneSkinsState extends State<NewPlaneSkins> {
+  void iniState() {
+    super.initState();
+    getTracking();
+    Future.delayed(const Duration(milliseconds: 300));
+    AdjustConfig config =
+        new AdjustConfig('949s6j4k9dds', AdjustEnvironment.sandbox);
+    AdjustEnvironment.production;
+    Adjust.start(config);
+    AdjustEnvironment.production;
+    AdjustEvent adjustEvent = new AdjustEvent('opened');
+    Adjust.trackEvent(adjustEvent);
+  }
+
+  Future<void> getTracking() async {
+    final TrackingStatus status =
+        await AppTrackingTransparency.requestTrackingAuthorization();
+    print(status);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +44,7 @@ class NewPlaneSkins extends StatelessWidget {
       body: SafeArea(
         bottom: false,
         child: InAppWebView(
-          initialUrlRequest: URLRequest(url: Uri.parse(details)),
+          initialUrlRequest: URLRequest(url: Uri.parse(widget.details)),
         ),
       ),
     );
@@ -63,5 +91,4 @@ class SharedPreferencesService {
 
   double get coins => _getData(_kcoinsKey) ?? 10000;
   set coins(double value) => _saveData(_kcoinsKey, value);
-
 }

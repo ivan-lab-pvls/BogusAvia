@@ -1,26 +1,28 @@
 import 'dart:io';
 
+import 'package:app_tracking_transparency/app_tracking_transparency.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:skypilot_app/firebase_options.dart';
 import 'package:skypilot_app/screens/flapping_plane/coins_bloc/coins_bloc.dart';
 import 'package:skypilot_app/services/shared_preferences.dart';
 import 'package:skypilot_app/skypilot_app.dart';
 
+import 'screens/settings/notifx.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
+  await AppTrackingTransparency.requestTrackingAuthorization();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await FirebaseRemoteConfig.instance.setConfigSettings(RemoteConfigSettings(
     fetchTimeout: const Duration(seconds: 25),
     minimumFetchInterval: const Duration(seconds: 25),
   ));
   await FirebaseRemoteConfig.instance.fetchAndActivate();
-
+  await NotificationsRequest().activate();
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
