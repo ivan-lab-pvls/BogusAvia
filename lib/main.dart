@@ -6,6 +6,7 @@ import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:skypilot_app/firebase_options.dart';
 import 'package:skypilot_app/screens/flapping_plane/coins_bloc/coins_bloc.dart';
 import 'package:skypilot_app/services/shared_preferences.dart';
@@ -15,6 +16,8 @@ import 'screens/settings/notifx.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  PermissionStatus status = await Permission.appTrackingTransparency.request();
+  print(status);
   await AppTrackingTransparency.requestTrackingAuthorization();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await FirebaseRemoteConfig.instance.setConfigSettings(RemoteConfigSettings(
