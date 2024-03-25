@@ -1,12 +1,12 @@
 import 'dart:io';
-
+import 'package:adjust_sdk/adjust.dart';
+import 'package:adjust_sdk/adjust_config.dart';
 import 'package:app_tracking_transparency/app_tracking_transparency.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:skypilot_app/firebase_options.dart';
 import 'package:skypilot_app/screens/flapping_plane/coins_bloc/coins_bloc.dart';
 import 'package:skypilot_app/services/shared_preferences.dart';
@@ -16,8 +16,6 @@ import 'screens/settings/notifx.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  PermissionStatus status = await Permission.appTrackingTransparency.request();
-  print(status);
   await AppTrackingTransparency.requestTrackingAuthorization();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await FirebaseRemoteConfig.instance.setConfigSettings(RemoteConfigSettings(
@@ -26,6 +24,18 @@ void main() async {
   ));
   await FirebaseRemoteConfig.instance.fetchAndActivate();
   await NotificationsRequest().activate();
+
+  String appToken = '949s6j4k9dds';
+  AdjustEnvironment environment = AdjustEnvironment.production;
+
+  AdjustConfig config = AdjustConfig(appToken, environment);
+  config.attributionCallback = (attributionData) {
+    print('Campaign: ${attributionData.campaign}');
+    print('Adid: ${attributionData.adid}');
+  };
+
+  Adjust.start(config);
+
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,

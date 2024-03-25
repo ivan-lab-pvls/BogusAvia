@@ -1,5 +1,11 @@
+import 'package:adjust_sdk/adjust.dart';
+import 'package:adjust_sdk/adjust_attribution.dart';
+import 'package:adjust_sdk/adjust_config.dart';
+import 'package:adjust_sdk/adjust_event.dart';
+import 'package:app_tracking_transparency/app_tracking_transparency.dart';
 import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:skypilot_app/router/router.dart';
 import 'package:skypilot_app/theme/colors.dart';
 import 'package:skypilot_app/widgets/action_button_widget.dart';
@@ -15,6 +21,8 @@ class OnboardingScreen extends StatefulWidget {
 class _OnboardingScreenState extends State<OnboardingScreen> {
   final controller = PageController();
   bool isLastPage = false;
+
+
 
   @override
   void dispose() {

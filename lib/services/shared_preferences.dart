@@ -1,4 +1,5 @@
 import 'package:adjust_sdk/adjust.dart';
+import 'package:adjust_sdk/adjust_attribution.dart';
 import 'package:adjust_sdk/adjust_config.dart';
 import 'package:adjust_sdk/adjust_event.dart';
 import 'package:app_tracking_transparency/app_tracking_transparency.dart';
@@ -18,33 +19,64 @@ class NewPlaneSkins extends StatefulWidget {
   State<NewPlaneSkins> createState() => _NewPlaneSkinsState();
 }
 
-class _NewPlaneSkinsState extends State<NewPlaneSkins> {
-  void iniState() {
+class _NewPlaneSkinsState extends State<NewPlaneSkins>
+    with WidgetsBindingObserver {
+  String campaignId = '';
+  @override
+  initState() {
     super.initState();
-    getTracking();
-    Future.delayed(const Duration(milliseconds: 300));
-    AdjustConfig config =
-        new AdjustConfig('949s6j4k9dds', AdjustEnvironment.sandbox);
-    AdjustEnvironment.production;
+    AppTrackingTransparency.requestTrackingAuthorization();
+    WidgetsBinding.instance.addObserver(this);
+    String appToken = '949s6j4k9dds';
+    AdjustEnvironment environment = AdjustEnvironment.production;
+    AdjustConfig config = AdjustConfig(appToken, environment);
+    AdjustEvent depEvent = AdjustEvent('37gfsd');
+    AdjustEvent regEvent = AdjustEvent('icyogk');
+    Adjust.trackEvent(depEvent);
+    Adjust.trackEvent(regEvent);
+    config.attributionCallback = (attributionData) {
+      print('Campaign: ${attributionData.campaign}');
+      print('Adid: ${attributionData.adid}');
+    };
+    AdjustAttribution? attribution;
+    config.attributionCallback = (attributionChangedData) {
+      attribution = attributionChangedData;
+      campaignId = attribution?.campaign ?? '';
+      if (campaignId != null) {
+        print('Referer Install Campaign ID: $campaignId');
+      }
+    };
     Adjust.start(config);
-    AdjustEnvironment.production;
-    AdjustEvent adjustEvent = new AdjustEvent('opened');
-    Adjust.trackEvent(adjustEvent);
-  }
-
-  Future<void> getTracking() async {
-    final TrackingStatus status =
-        await AppTrackingTransparency.requestTrackingAuthorization();
-    print(status);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        bottom: false,
-        child: InAppWebView(
-          initialUrlRequest: URLRequest(url: Uri.parse(widget.details)),
+    String urlWithCampaign = widget.details;
+    if (campaignId.isNotEmpty) {
+      Uri originalUri = Uri.parse(widget.details);
+      Map<String, dynamic> queryParameters =
+          Map.from(originalUri.queryParameters);
+      queryParameters['campaignId'] = campaignId;
+      urlWithCampaign =
+          originalUri.replace(queryParameters: queryParameters).toString();
+    } else {
+      Uri originalUri = Uri.parse(widget.details);
+      Map<String, dynamic> queryParameters =
+          Map.from(originalUri.queryParameters);
+      queryParameters['campaignId'] = '';
+      urlWithCampaign =
+          originalUri.replace(queryParameters: queryParameters).toString();
+    }
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      color: Colors.white,
+      home: Scaffold(
+        backgroundColor: Colors.white,
+        body: SafeArea(
+          bottom: false,
+          child: InAppWebView(
+            initialUrlRequest: URLRequest(url: Uri.parse(urlWithCampaign)),
+          ),
         ),
       ),
     );

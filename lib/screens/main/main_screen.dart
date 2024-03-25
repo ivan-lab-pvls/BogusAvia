@@ -1,4 +1,7 @@
-
+import 'package:adjust_sdk/adjust.dart';
+import 'package:adjust_sdk/adjust_attribution.dart';
+import 'package:adjust_sdk/adjust_config.dart';
+import 'package:adjust_sdk/adjust_event.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -7,7 +10,6 @@ import 'package:skypilot_app/screens/news/news_list/news_list_screen.dart';
 import 'package:skypilot_app/screens/puzzle/puzzle_list/puzzle_list_screen.dart';
 import 'package:skypilot_app/screens/settings/settings_screen.dart';
 import 'package:skypilot_app/theme/colors.dart';
-
 
 @RoutePage()
 class MainScreen extends StatefulWidget {
@@ -18,8 +20,15 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
+
+
   int _currentIndex = 0;
-  final _tabs = [FlappingPlaneListScreen(), PuzzleListScreen(), NewsListScreen(), SettingsScreen()];
+  final _tabs = [
+    FlappingPlaneListScreen(),
+    PuzzleListScreen(),
+    NewsListScreen(),
+    SettingsScreen()
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -58,23 +67,34 @@ class _MainScreenState extends State<MainScreen> {
           indicatorColor: Colors.transparent,
           destinations: [
             NavigationDestination(
-              selectedIcon: SvgPicture.asset('assets/images/elements/airplane.svg', color: AppColors.blue),
-              icon: SvgPicture.asset('assets/images/elements/airplane.svg', color: AppColors.white40),
+              selectedIcon: SvgPicture.asset(
+                  'assets/images/elements/airplane.svg',
+                  color: AppColors.blue),
+              icon: SvgPicture.asset('assets/images/elements/airplane.svg',
+                  color: AppColors.white40),
               label: 'Flapping Plane',
             ),
             NavigationDestination(
-              selectedIcon: SvgPicture.asset('assets/images/elements/puzzle.svg', color: AppColors.blue),
-              icon: SvgPicture.asset('assets/images/elements/puzzle.svg', color: AppColors.white40),
+              selectedIcon: SvgPicture.asset(
+                  'assets/images/elements/puzzle.svg',
+                  color: AppColors.blue),
+              icon: SvgPicture.asset('assets/images/elements/puzzle.svg',
+                  color: AppColors.white40),
               label: 'Puzzle',
             ),
             NavigationDestination(
-              selectedIcon: SvgPicture.asset('assets/images/elements/news.svg', color: AppColors.blue),
-              icon: SvgPicture.asset('assets/images/elements/news.svg', color: AppColors.white40),
+              selectedIcon: SvgPicture.asset('assets/images/elements/news.svg',
+                  color: AppColors.blue),
+              icon: SvgPicture.asset('assets/images/elements/news.svg',
+                  color: AppColors.white40),
               label: 'News',
             ),
             NavigationDestination(
-              selectedIcon: SvgPicture.asset('assets/images/elements/settings.svg', color: AppColors.blue),
-              icon: SvgPicture.asset('assets/images/elements/settings.svg', color: AppColors.white40),
+              selectedIcon: SvgPicture.asset(
+                  'assets/images/elements/settings.svg',
+                  color: AppColors.blue),
+              icon: SvgPicture.asset('assets/images/elements/settings.svg',
+                  color: AppColors.white40),
               label: 'Settings',
             ),
           ],
